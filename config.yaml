@@ -1,0 +1,4 @@
+database:
+  file: "tasks.json"
+server:
+  port: 8080
