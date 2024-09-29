@@ -12,10 +12,10 @@ jobs:
 
     steps:
       - name: Проверка исходного кода
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3  # Обновлено на v3
 
       - name: Установка Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3  # Обновлено на v3
         with:
           go-version: '1.22.2'  # Укажите вашу версию Go
 
