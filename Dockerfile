@@ -1,17 +1,27 @@
-# Используем официальный образ Go
-FROM golang:1.14-alpine
+# Используем официальный образ Golang
+FROM golang:1.22.2 AS builder
 
 # Устанавливаем рабочую директорию
 WORKDIR /app
 
-# Копируем файлы проекта
-COPY . .
-
-# Загружаем зависимости
+# Копируем go.mod и go.sum для установки зависимостей
+COPY go.mod go.sum ./
 RUN go mod download
 
-# Собираем бинарник
+# Копируем остальные файлы
+COPY . .
+
+# Сборка приложения
 RUN go build -o main .
 
-# Запуск приложения
-CMD ["./main"]
+# Используем легкий образ для запуска
+FROM alpine:latest
+
+# Копируем скомпилированный бинарник из builder
+COPY --from=builder /app/main .
+
+# Устанавливаем необходимые зависимости
+RUN apk add --no-cache ca-certificates
+
+# Запускаем приложение
+ENTRYPOINT ["./main"]

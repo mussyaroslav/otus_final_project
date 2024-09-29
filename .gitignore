@@ -1,0 +1,36 @@
+# Папки
+bin/
+vendor/
+node_modules/
+build/
+
+# Файлы конфигурации IDE
+*.idea/
+*.vscode/
+
+# Системные файлы
+.DS_Store
+Thumbs.db
+
+# Файлы логов
+*.log
+
+# Секретные файлы
+.env
+config.yaml
+
+# Docker
+*.tar
+*.gz
+*.zip
+docker-compose.override.yml
+
+# Go-specific
+*.test
+*.exe
+*.out
+*.profile
+*.apk
+*.bin
+*.so
+*.a

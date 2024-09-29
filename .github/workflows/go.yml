@@ -1,28 +1,33 @@
-name: CI
+name: Go CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Проверка исходного кода
+        uses: actions/checkout@v3  # Обновлено на v3
 
-      - name: Set up Go
-        uses: actions/setup-go@v3
+      - name: Установка Go
+        uses: actions/setup-go@v3  # Обновлено на v3
         with:
-          go-version: '1.22.2'  # Замените на нужную вам версию Go
+          go-version: '1.22.2'  # Укажите вашу версию Go
 
-      - name: Run golangci-lint
+      - name: Установка golangci-lint
+        run: |
+          go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+
+      - name: Линтинг
         run: golangci-lint run ./...
 
-      - name: Run tests
+      - name: Запуск тестов
         run: go test -race -count=100 ./...
+
+      - name: Сборка
+        run: go build -o myapp .
