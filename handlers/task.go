@@ -5,6 +5,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/mussyaroslav/otus_final_project/database"
 	"github.com/mussyaroslav/otus_final_project/models"
+	"log"
 	"net/http"
 	"strconv"
 	"text/template"
@@ -117,6 +118,7 @@ func TaskHTML(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(params["id"])
 	if err != nil {
 		http.Error(w, "Invalid task ID", http.StatusBadRequest)
+		log.Printf("Invalid task ID: %v", err)
 		return
 	}
 
@@ -131,13 +133,15 @@ func TaskHTML(w http.ResponseWriter, r *http.Request) {
 
 	if foundTask == nil {
 		http.Error(w, "Task not found", http.StatusNotFound)
+		log.Printf("Task with ID %d not found", id)
 		return
 	}
 
 	// Парсинг шаблона
-	tmpl, err := template.ParseFiles("./web/task.html")
+	tmpl, err := template.ParseFiles("../web/task.html")
 	if err != nil {
 		http.Error(w, "Error loading template", http.StatusInternalServerError)
+		log.Printf("Error loading template: %v", err)
 		return
 	}
 
@@ -145,5 +149,6 @@ func TaskHTML(w http.ResponseWriter, r *http.Request) {
 	err = tmpl.Execute(w, foundTask)
 	if err != nil {
 		http.Error(w, "Error rendering template", http.StatusInternalServerError)
+		log.Printf("Error rendering template: %v", err)
 	}
 }

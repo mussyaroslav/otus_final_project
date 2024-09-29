@@ -10,9 +10,8 @@ func LoadConfig() {
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath(".")
 
-	err := viper.ReadInConfig()
-	if err != nil {
-		log.Printf("Config file not found, using default settings")
+	if err := viper.ReadInConfig(); err != nil {
+		log.Printf("Config file not found, using default settings: %v", err)
 	}
 
 	// Установка значений по умолчанию

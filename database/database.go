@@ -10,22 +10,34 @@ import (
 
 var tasks []models.Task
 
+// InitInMemoryDB инициализирует in-memory базу данных
+func InitInMemoryDB() {
+	ClearTasks()
+}
+
+// ClearTasks очищает задачи
+func ClearTasks() {
+	tasks = []models.Task{}
+	SaveTasks() // Сохраняем пустой файл, если необходимо
+}
+
 // InitDB инициализирует JSON файл для хранения задач
 func InitDB() {
 	filePath := viper.GetString("database.file")
+	log.Printf("Database file path: %s", filePath)
 
 	// Проверяем, существует ли файл
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
 		log.Printf("File %s not found, creating new one...", filePath)
-		// Создаем пустой файл
 		file, err := os.Create(filePath)
 		if err != nil {
 			log.Fatalf("Failed to create file: %v", err)
 		}
 		defer file.Close()
 
-		// Записываем пустой массив задач
-		file.Write([]byte("[]"))
+		if _, err := file.Write([]byte("[]")); err != nil {
+			log.Fatalf("Failed to write empty array to file: %v", err)
+		}
 	}
 
 	// Читаем существующие задачи из файла
@@ -35,16 +47,16 @@ func InitDB() {
 	}
 	defer file.Close()
 
-	// Декодируем задачи из JSON в переменную tasks
 	decoder := json.NewDecoder(file)
 	if err := decoder.Decode(&tasks); err != nil {
 		log.Fatalf("Failed to decode tasks from file: %v", err)
 	}
 }
 
-// SaveTasks сохраняет текущий список задач в JSON файл
+// SaveTasks сохраняет задачи в файл
 func SaveTasks() {
 	filePath := viper.GetString("database.file")
+	log.Printf("Saving tasks to file: %s", filePath)
 
 	file, err := os.Create(filePath)
 	if err != nil {
