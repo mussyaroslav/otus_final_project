@@ -50,7 +50,10 @@ func GetTasks(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	json.NewEncoder(w).Encode(filteredTasks)
+	if err := json.NewEncoder(w).Encode(filteredTasks); err != nil {
+		http.Error(w, "Error encoding tasks to JSON", http.StatusInternalServerError)
+		return
+	}
 }
 
 // Добавление новой задачи
@@ -71,7 +74,10 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 	task.UpdatedAt = time.Now()
 
 	database.AddTask(task)
-	json.NewEncoder(w).Encode(task)
+	if err := json.NewEncoder(w).Encode(task); err != nil {
+		http.Error(w, "Error encoding task to JSON", http.StatusInternalServerError)
+		return
+	}
 }
 
 // Обновление задачи по ID
@@ -91,8 +97,8 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 			updatedTask.CreatedAt = task.CreatedAt
 			updatedTask.UpdatedAt = time.Now()
 
-			if database.UpdateTask(uint(id), updatedTask) {
-				json.NewEncoder(w).Encode(updatedTask)
+			if err := json.NewEncoder(w).Encode(updatedTask); err != nil {
+				http.Error(w, "Error encoding updated task to JSON", http.StatusInternalServerError)
 				return
 			}
 		}
